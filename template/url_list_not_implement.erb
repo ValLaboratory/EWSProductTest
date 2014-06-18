@@ -1,0 +1,28 @@
+{
+
+    {
+        "closed": true, 
+        "method": "/course/create/teiki", 
+        "name": "course_create_teiki", 
+        "query": {
+            "serializeData": "<%= get_course_serial("date=#{Time.now.strftime("%Y%m%d").to_s}&time=1000&viaList=21987:22671", 1) %>"
+        }
+    },
+    {
+        "closed": true, 
+        "method": "/course/create/teiki", 
+        "name": "course_create_teiki", 
+        "query": {
+            "serializeData": "<%= get_course_serial("date=#{Time.now.strftime("%Y%m%d").to_s}&time=1000&viaList=21987:22671", 1) %>"
+        }
+    },
+    {
+        "closed": true, 
+        "method": "/course/assign/teiki", 
+        "name": "course_assign_teiki", 
+        "query": {
+            "serializeData": "<%= get_course_serial("date=#{Time.now.strftime("%Y%m%d").to_s}&time=1000&viaList=21987:22671", 1) %>", 
+            "teikiData": "<%= easy_create_teiki('21987:22671') %>"
+        }
+    }
+}
