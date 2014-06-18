@@ -1,0 +1,8 @@
+.rake
+.rspec
+.rvmrc
+.ruby-version
+/.bundle
+/vendor
+config/env.yaml
+.DS_Store

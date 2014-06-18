@@ -1,0 +1,38 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    diff-lcs (1.2.5)
+    json (1.8.1)
+    jsonpath (0.5.6)
+      multi_json
+    mime-types (2.3)
+    mini_portile (0.6.0)
+    multi_json (1.10.1)
+    nokogiri (1.6.2.1)
+      mini_portile (= 0.6.0)
+    rake (10.3.2)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    rspec (3.0.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+    rspec-core (3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-expectations (3.0.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.0.0)
+    rspec-mocks (3.0.1)
+      rspec-support (~> 3.0.0)
+    rspec-support (3.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  json
+  jsonpath
+  nokogiri
+  rake
+  rest-client
+  rspec
