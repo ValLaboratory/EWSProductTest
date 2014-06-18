@@ -21,8 +21,8 @@ shared_examples 'XML形式のメソッドが機能している事を確認' do |
 		end
 		it_multi_subject 'ResultSet要素の有無', subject_hash, :eq, 1
 	rescue =>e
-		it "\n"+e.message+"\n"+e.backtrace.join("\n") do
-			expect(false).to eq(true)
+		it "\n"+e.message do
+			expect(false).to eq(true), e.backtrace.join("\n")
 		end
 	end
 end
@@ -47,8 +47,8 @@ shared_examples 'JSON形式のメソッドが機能している事を確認' do 
 		end
 		it_multi_subject 'ResultSet要素の有無', subject_hash, :eq, 1
 	rescue =>e
-		it "\n"+e.message+"\n"+e.backtrace.join("\n") do
-			expect(false).to eq(true)
+		it "\n"+e.message do
+			expect(false).to eq(true), e.backtrace.join("\n")
 		end
 	end
 end

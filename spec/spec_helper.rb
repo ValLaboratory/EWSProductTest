@@ -13,10 +13,7 @@ require File.expand_path('shared_examples', File.dirname(__FILE__))
 
 module EWSAppTest
 	ENV = YAML.load( File.read( File.expand_path('../config/env.yaml', File.dirname(__FILE__)) ) )
-pp ENV
 	def _get_ews_base_url
-		# webservice = 'http://ec2-54-199-165-105.ap-northeast-1.compute.amazonaws.com'
-		# webservice = 'http://latest.api.ekispert.com'
 		webservice = ENV['webservice']
 		version = ENV['version']
 		"#{webservice}/#{version}"
