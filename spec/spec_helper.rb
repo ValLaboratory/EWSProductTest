@@ -71,7 +71,7 @@ module EWSAppTest
 	    doc = Nokogiri::XML( get_xml('/train/timetable', "stationName=#{stationName}&date=#{date}") )
 	    serviceSectionCode = doc.xpath("//ServiceSection[@arrival='#{arrivalStationName}']/@code")[0].text
 	    doc = Nokogiri::XML( get_xml('/train/timetable', "serviceSectionCode=#{serviceSectionCode}&date=#{date}") )
-	    [doc.xpath('//Line[1]//DepartureState[1]/Datetime').text,  doc.xpath('//Line[1]//ArrivalState[last()]/Datetime').text]
+	    [doc.xpath('//Line[1]//DepartureState/Datetime')[0].text.to_s,  doc.xpath('//Line[1]//ArrivalState/Datetime')[-1].text.to_s]
 	end
 
 
