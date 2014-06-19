@@ -32,7 +32,7 @@ module EWSAppTest
 		url = "#{_get_ews_base_url}/#{format}#{'/closed' if closed}#{method}?key=#{_get_key}"
 		url += "&#{encoded_query}" if encoded_query
 		begin
-			CHASH[url] = RestClient.get url
+			RestClient.get url
 		rescue =>e
 			pp "Error URL: #{url}"
 			raise e
