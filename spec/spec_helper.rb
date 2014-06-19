@@ -32,7 +32,7 @@ module EWSAppTest
 		url = "#{_get_ews_base_url}/#{format}#{'/closed' if closed}#{method}?key=#{_get_key}"
 		url += "&#{encoded_query}" if encoded_query
 		begin
-			RestClient.get url
+			CHASH[url] = RestClient.get url
 		rescue =>e
 			pp "Error URL: #{url}"
 			raise e
@@ -59,6 +59,10 @@ module EWSAppTest
 	  }
 	end
 
+	def get_course_point(query)
+		doc = Nokogiri::XML( get_xml('/toolbox/course/point', query) )
+		doc.xpath('//SerializeData/text()').to_s
+	end
 
 	def get_trainCode(date, stationName, arrivalStationName)
 	    doc = Nokogiri::XML( get_xml('/train/timetable', "stationName=#{stationName}&date=#{date}") )
