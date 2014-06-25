@@ -7,12 +7,18 @@ require 'json'
 require 'jsonpath'
 require 'open-uri'
 require 'yaml'
+require 'net/http'
 require 'pp'
 require File.expand_path('shared_examples', File.dirname(__FILE__))
 
 
 module EWSAppTest
 	ENV = YAML.load( File.read( File.expand_path('../config/env.yaml', File.dirname(__FILE__)) ) )
+
+	def _get_ews_url
+		ENV['webservice']
+	end
+
 	def _get_ews_base_url
 		webservice = ENV['webservice']
 		version = ENV['version']
@@ -35,6 +41,7 @@ module EWSAppTest
 			RestClient.get url
 		rescue =>e
 			pp "Error URL: #{url}"
+			return e.response if e.methods.include?(:response)
 			raise e
 		end
 	end
@@ -47,6 +54,30 @@ module EWSAppTest
 		_get(method, query, 'json', closed)
 	end
 
+	# rest_client を使わずにgetする
+	# 例えば rest_client では bad URI になってしまうリクエストを送信したりすることが事ができる
+	def get_naked(method_query)
+		method = method_query.split('?')[0]
+		query = method_query.split('?')[1]
+		url = URI.parse("#{_get_ews_url}#{method}")
+		begin
+			if ENV['proxy']
+				net_http = Net::HTTP::Proxy(ENV['proxy'], ENV['proxy_port'].to_i)
+			else
+				net_http = Net::HTTP
+			end			
+			res = net_http.start(url.host, url.port) {|http|
+				path_query = url.path
+				path_query += "?#{query}" if query
+				http.get(path_query)
+			}
+			res
+		rescue =>e
+			return e.response if e.methods.include?(:response)
+			raise e
+		end
+	end
+
 	#
 	# 複数のサブジェクトに対して一つのマッチャーを実行する
 	# subject_hash は例えば {:xml=>xml_subject, :json=>json_subject } の用にする 
@@ -54,7 +85,13 @@ module EWSAppTest
 	def it_multi_subject(text, subject_hash, matcher, *args, &block)
 	  subject_hash.each{|key, subject|
 	    it "#{text}(#{key.to_s})" do
-	      expect(subject).to __send__(matcher, *args, &block)
+	    	if matcher == :be_within
+	    		delta = args[1]
+	    		expected = args[0]
+	    		expect(subject).to be_within(delta).of(expected)
+	    	else
+	      		expect(subject).to __send__(matcher, *args, &block)
+	      	end
 	    end
 	  }
 	end
