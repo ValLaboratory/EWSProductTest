@@ -165,13 +165,13 @@ module EWSAppTest
     ['date', 'time'].each do |param|
       next if data[param].nil? or query.match(/(^|&)#{param}=/)
 
-      need_params = Array(data['need_params'])
-      if need_params.empty? or need_params.all{|p| query.include?("#{p}=") }
-        case data['default']
+      need_params = Array(data[param]['need_params'])
+      if need_params.empty? or need_params.all?{|p| query.include?("#{p}=") }
+        case data[param]['default']
         when 'today'
-          query = "#{params}&#{kind}=#{datetime.strftime('%Y%m%d')}"
+          query = "#{query}&#{param}=#{datetime.strftime('%Y%m%d')}"
         when 'now'
-          query = "#{params}&#{kind}=#{datetime.strftime('%H%M')}"
+          query = "#{query}&#{param}=#{datetime.strftime('%H%M')}"
         end
       end
     end
