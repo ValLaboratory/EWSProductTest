@@ -73,18 +73,23 @@ shared_examples 'URLをGETした結果を確認' do |_test_recode|
 	begin
 		method_query = _test_recode['method_query']
 		net_http_res = get_naked(method_query)
-		if _test_recode['check_targets']['http_status']
-			subject_hash = {}
-			subject_hash[:opend] = net_http_res['status']
-			it_multi_subject 'http ステータスの確認', subject_hash, :match, /#{_test_recode['check_targets']['status']}/
-		end
-		if _test_recode['check_targets']['body_size']
-			subject_hash = {}
-			subject_hash[:opend] = net_http_res.body.bytesize
-			# 誤差許容範囲
-			delta = (_test_recode['check_targets']['body_size']['size'] / 100) * _test_recode['check_targets']['body_size']['range']
-			it_multi_subject "レスポンスのバイトサイズが誤差#{_test_recode['check_targets']['body_size']['range']}%に収まるか確認(上限)", subject_hash, :be_within, _test_recode['check_targets']['body_size']['size'], delta
-		end
+    
+    if serialize_data_version_error?(method_query, net_http_res.body)
+      it 'シリアライズデータのバージョン違いエラーは対象外。' do true end
+    else
+      if _test_recode['check_targets']['http_status']
+        subject_hash = {}
+        subject_hash[:opend] = net_http_res['status']
+        it_multi_subject 'http ステータスの確認', subject_hash, :match, /#{_test_recode['check_targets']['status']}/
+      end
+      if _test_recode['check_targets']['body_size']
+        subject_hash = {}
+        subject_hash[:opend] = net_http_res.body.bytesize
+        # 誤差許容範囲
+        delta = (_test_recode['check_targets']['body_size']['size'] / 100) * _test_recode['check_targets']['body_size']['range']
+        it_multi_subject "レスポンスのバイトサイズが誤差#{_test_recode['check_targets']['body_size']['range']}%に収まるか確認", subject_hash, :be_within, _test_recode['check_targets']['body_size']['size'], delta
+      end
+    end
 	rescue =>e
 		it "\n"+e.message do
 			expect(false).to eq(true), e.message+"\n"+e.backtrace.join("\n")

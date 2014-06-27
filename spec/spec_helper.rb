@@ -8,12 +8,14 @@ require 'jsonpath'
 require 'open-uri'
 require 'yaml'
 require 'net/http'
+require 'date'
 require 'pp'
 require File.expand_path('shared_examples', File.dirname(__FILE__))
 
 
 module EWSAppTest
 	ENV = YAML.load( File.read( File.expand_path('../config/env.yaml', File.dirname(__FILE__)) ) )
+  METHOD_WITH_DATE_TIME = YAML.load(File.read(File.expand_path('../config/method_with_date_time.yaml', File.dirname(__FILE__))))
 
 	def _get_ews_url
 		ENV['webservice']
@@ -149,6 +151,62 @@ module EWSAppTest
 			query
 		end
 	end
+
+  def log_file_path
+    ENV['log_file_path']
+  end
+
+  def _complement_date_time(method_query, datetime)
+    path, query = method_query.split('?')
+    method = path.sub(/^\/v1\/[^\/]+/, '')
+    data = METHOD_WITH_DATE_TIME[method]
+    return method_query if data.nil?
+
+    ['date', 'time'].each do |param|
+      next if data[param].nil? or query.match(/(^|&)#{param}=/)
+
+      need_params = Array(data['need_params'])
+      if need_params.empty? or need_params.all{|p| query.include?("#{p}=") }
+        case data['default']
+        when 'today'
+          query = "#{params}&#{kind}=#{datetime.strftime('%Y%m%d')}"
+        when 'now'
+          query = "#{params}&#{kind}=#{datetime.strftime('%H%M')}"
+        end
+      end
+    end
+    "#{path}?#{query}"
+  end
+
+  def _pickup_time_and_method_query(record)
+    datetime, method_query = record.values_at(3, 6)
+    datetime = DateTime.strptime(datetime, '[%d/%b/%Y:%H:%M:%S')
+    method_query = _complement_date_time(method_query, datetime)
+    return datetime.strftime('%d/%b/%Y:%H:%M:%S'), method_query
+  end
+
+  def make_record_data(record)
+    record = record.split(/\s/)
+    time, method_query = _pickup_time_and_method_query(record)
+    {
+      'time'         => time,
+      'method_query' => method_query,
+      'check_targets' => {
+        'http_status' => record[8],
+        'body_size' =>{ 
+          'size'  => record[9].to_i,
+          'range' => 10
+        }
+      }
+    }
+  end
+
+  def serialize_data_version_error?(method_query, res)
+    return false unless method_query.match(/(^|&)serializeData=/)
+    error = Nokogiri::XML(res).at_xpath('/ResultSet/Error/Message/text()')
+    return false if error.nil?
+    error.text.include?('シリアライズデータは同一のengineVersion間でのみ利用できます。')
+  end
 end
 
 

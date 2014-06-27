@@ -1,0 +1,63 @@
+# 日付や時刻の指定を持つAPIの情報一覧
+#
+# path:
+#   date:
+#     default: 省略時の動作。today(本日日付)、none(日付を考慮しない)
+#     need_params: ['日付指定時に他に指定が必要なパラメータ名の配列']
+#   time:
+#     default: 省略時の動作。now(現在時刻)
+#     need_params: ['時刻指定時に他に指定が必要なパラメータ名の配列']
+
+/rail/service:
+  date: 
+    default: today
+/station:
+  date:
+    default: today
+/rail:
+  date:
+    default: today
+/line:
+  date:
+    default: today
+/station/info:
+  date:
+    default: today
+/search/course:
+  date:
+    default: today
+  time:
+    default: now
+/search/course/extreme:
+  date:
+    default: today
+  time:
+    default: now
+/search/course/plain:
+  date:
+    default: today
+/search/course/bus:
+  date:
+    default: today
+/course/edit:
+  date:
+    need_params: ['assignType']
+    default: today
+  time:
+    need_params: ['assignType']
+    default: now
+/train/timetable:
+  date:
+    default: none
+/station/timetable:
+  date:
+    default: none
+/bus/timetable:
+  date:
+    default: none
+/ship/timetable:
+  date:
+    default: none
+/plane/timetable:
+  date:
+    default: none
