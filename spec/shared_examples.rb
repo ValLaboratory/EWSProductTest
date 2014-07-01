@@ -84,7 +84,10 @@ shared_examples 'URLをGETした結果を確認' do |_test_recode|
       end
       if _test_recode['check_targets']['body_size']
         subject_hash = {}
-        subject_hash[:opend] = net_http_res.body.bytesize
+        # サイズの誤差の原因となる既知の文字列を取り除く
+        response_body = net_http_res.body.sub(/\sstandalone='yes'/, '')
+        response_body = response_body.gsub(/([{}:,\[\]"])\s+/, '\1') if method_query.match(/^\/v1\/json\//)
+        subject_hash[:opend] = response_body.bytesize
         # 誤差許容範囲
         delta = (_test_recode['check_targets']['body_size']['size'] / 100) * _test_recode['check_targets']['body_size']['range']
         it_multi_subject "レスポンスのバイトサイズが誤差#{_test_recode['check_targets']['body_size']['range']}%に収まるか確認", subject_hash, :be_within, _test_recode['check_targets']['body_size']['size'], delta
