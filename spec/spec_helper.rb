@@ -156,6 +156,10 @@ module EWSAppTest
     ENV['log_file_path']
   end
 
+  def checked_keys_file_path
+    ENV['checked_keys_file_path'] || 'checked_keys.txt'
+  end
+
   def _complement_date_time(method_query, datetime)
     path, query = method_query.split('?')
     method = path.sub(/^\/v1\/[^\/]+/, '')
