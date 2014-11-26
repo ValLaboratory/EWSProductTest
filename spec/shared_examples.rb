@@ -10,12 +10,12 @@ shared_examples 'XML形式のメソッドが機能している事を確認' do |
 		res   = get_xml( _test_recode['method'], query )
 		closed = _test_recode['closed']
 		closed = true if closed == nil
-		subject_hash[:opend] = res.headers[:status].to_s
+		subject_hash[:opend] = res.code
 		if closed
 			res_closed = get_xml( _test_recode['method'], query , true)
-			subject_hash[:closed] = res_closed.headers[:status].to_s
+			subject_hash[:closed] = res_closed.code
 		end
-		it_multi_subject 'http ステータスの確認', subject_hash, :eq, '200 OK'
+		it_multi_subject 'http ステータスの確認', subject_hash, :eq, 200
 		subject_hash = {}
 		subject_hash[:opend] = Nokogiri::XML(res).xpath("//ResultSet").length
 		if closed
@@ -35,14 +35,14 @@ shared_examples 'JSON形式のメソッドが機能している事を確認' do 
 	begin
 		query = get_query_string(_test_recode['query'])
 		res = get_json( _test_recode['method'], query )
-		subject_hash[:opend] = res.headers[:status].to_s
+		subject_hash[:opend] = res.code
 		closed = _test_recode['closed']
 		closed = true if closed == nil
 		if closed
 			res_closed = get_json( _test_recode['method'], query , true)
-			subject_hash[:closed] = res_closed.headers[:status].to_s
+			subject_hash[:closed] = res_closed.code
 		end
-		it_multi_subject 'http ステータスの確認', subject_hash, :eq, '200 OK'
+		it_multi_subject 'http ステータスの確認', subject_hash, :eq, 200
 		subject_hash = {}
 		subject_hash[:opend] = JsonPath.new('$..ResultSet').on( JSON.parse(res) ).length
 		if closed
